@@ -1,9 +1,10 @@
+```yaml
 name: Daily Auto Commit
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # 12:00 UTC = 5:30 PM IST
-  workflow_dispatch:       # Allows manual testing
+    - cron: '0 12 * * *'  # 5:30 PM IST daily
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -18,13 +19,21 @@ jobs:
         with:
           persist-credentials: true
 
-      - name: Make a commit
+      - name: Make random commits
         run: |
           git config user.email "devendhiran0508@gmail.com"
           git config user.name "Devendhiran"
 
-          echo "Last updated: $(date)" >> activity.log
+          COUNT=$(( RANDOM % 6 + 1 ))
 
-          git add activity.log
-          git commit -m "Daily activity update"
+          echo "Today's commit count: $COUNT"
+
+          for i in $(seq 1 $COUNT); do
+            echo "Update $i at $(date)" >> activity.log
+
+            git add activity.log
+            git commit -m "Daily activity update $i"
+          done
+
           git push
+```
